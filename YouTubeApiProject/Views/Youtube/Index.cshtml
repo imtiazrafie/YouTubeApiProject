@@ -4,8 +4,6 @@
 	<h3 class="text-center my-4">Search for YouTube Videos</h3>
 	<form asp-controller="YouTube" asp-action="Search" method="post" class="d-flex align-items-center justify-content-center">
 		<input type="text" class="form-control me-2" id="searchInput" name="query" value="@ViewData["query"]" placeholder=" Search for videos..." aria-label="Search for videos..." aria-describedby="button-addon2" style="flex: 2;" required>
-
-		<!-- This code is for select (Imtiaz) -->
 		<select name="videoDuration" class="form-select me-2" id="filterInput" aria-label="Filter by duration" style="flex: 1;">
 			<option value="any" selected="@(ViewData["videoDuration"]?.ToString() == "any")">Any duration</option>
 			<option value="short" selected="@(ViewData["videoDuration"]?.ToString() == "short")">Short (<4 min)</option>
