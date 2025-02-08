@@ -1,0 +1,71 @@
+﻿@model YouTubeApiProject.Models.YouTubeSearchResult
+
+<div class="container my-4">
+	<h3 class="text-center my-4">Search for YouTube Videos</h3>
+	<form asp-controller="YouTube" asp-action="Search" method="post" class="d-flex align-items-center justify-content-center">
+		<input type="text" class="form-control me-2" id="searchInput" name="query" value="@ViewData["query"]" placeholder=" Search for videos..." aria-label="Search for videos..." aria-describedby="button-addon2" style="flex: 2;" required>
+		<select name="videoDuration" class="form-select me-2" id="filterInput" aria-label="Filter by duration" style="flex: 1;">
+			<option value="any" selected="@(ViewData["videoDuration"]?.ToString() == "any")">Any duration</option>
+			<option value="short" selected="@(ViewData["videoDuration"]?.ToString() == "short")">Short (<4 min)</option>
+			<option value="medium" selected="@(ViewData["videoDuration"]?.ToString() == "medium")">Medium (4-20 min)</option>
+			<option value="long" selected="@(ViewData["videoDuration"]?.ToString() == "long")">Long (>20 min)</option>
+		</select>
+		<button type="submit" class="btn btn-secondary" id="button-addon2" style="flex: 0.5;">Search</button>
+	</form>
+</div>
+
+@if (Model != null && Model.Videos.Any())
+{
+	//PAGINATION CONTROLS
+	<div class="pagination-buttons d-flex justify-content-between">
+		@if (!string.IsNullOrEmpty(Model.PrevPageToken))
+		{
+			<form asp-action="Search" method="post" class="next-button">
+				<input type="hidden" name="query" value="@ViewData["query"]" />
+				<input type="hidden" name="videoDuration" value="@ViewData["videoDuration"]" />
+				<input type="hidden" name="pageToken" value="@Model.PrevPageToken" />
+				<button type="submit" class="btn btn-secondary">Previous</button>
+			</form>
+		}
+
+		@if (!string.IsNullOrEmpty(Model.NextPageToken))
+		{
+			<form asp-action="Search" method="post" class="previous-button">
+				<input type="hidden" name="query" value="@ViewData["query"]" />
+				<input type="hidden" name="videoDuration" value="@ViewData["videoDuration"]" />
+				<input type="hidden" name="pageToken" value="@Model.NextPageToken" />
+				<button type="submit" class="btn btn-secondary">Next</button>
+			</form>
+		}
+	</div>
+
+	@for (int i = 0; i < Model.Videos.Count; i += 3)
+	{
+		<div class="row container my-4">
+			@for (int j = i; j < i + 3 && j < Model.Videos.Count; j++)
+			{
+				<div class=" card col-md-4 mb-4">
+					<div class="video-card h-100 shadow">
+						<div class="video-thumbnail-container position-relative">
+							<img src="@Model.Videos[j].ThumbnailUrl" class="card-img-top" alt="VideoThumbnail">
+							<span class="video-duration position-absolute">@Model.Videos[j].Duration</span>
+						</div>
+						<div class="card-body text-center">
+							<h5 class="card-title">@(Model.Videos[j].Title)</h5>
+							<br />
+							<p class="card-text description">@Model.Videos[j].Description</p>
+							<p class="card-text">
+								<small>
+									<strong>Uploaded On:</strong> @Model.Videos[j].UploadDate
+								</small>
+							</p>
+							<div class="card-footer">
+								<a href="@Model.Videos[j].VideoUrl" class="btn btn-secondary" target="_blank">Watch</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	}
+}
